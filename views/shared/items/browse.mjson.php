@@ -15,6 +15,9 @@ foreach( loop( 'item' ) as $item )
    $itemMetadata['title'] = html_entity_decode(
       strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
 
+   $itemMetadata['description'] = html_entity_decode(
+      strip_formatting( metadata( 'item', array( 'Dublin Core', 'Description' ) ) ) );
+
    // Add location information if there is any available.
    $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
    if( $location )
