@@ -3,16 +3,8 @@
 class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
 {
    protected $_filters = array(
-      'public_items_show',
       'response_contexts',
       'action_contexts' );
-
-   private $_controller;
-
-   public function filterPublicItemsShow()
-   {
-
-   }
 
    public function filterResponseContexts( $contexts )
    {
@@ -25,7 +17,7 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
    public function filterActionContexts( $contexts, $args ) {
       $controller = $args['controller'];
 
-      if( ($controller instanceof ItemsController) or
+      if( is_a( $controller, 'ItemsController' ) or
           is_a( $controller, 'TourBuilder_ToursController' ) )
       {
          $contexts['browse'] = array( 'mobile-json' );
