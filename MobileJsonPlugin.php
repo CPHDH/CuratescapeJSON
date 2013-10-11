@@ -8,9 +8,9 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
 
    public function filterResponseContexts( $contexts )
    {
-      $contexts['mobile-json'] = array( 'suffix' => 'mjson',
-                                        'headers' => array(
-                                           'Content-Type' => 'application/json' ) );
+      $contexts['mobile-json'] = array(
+         'suffix' => 'mjson',
+         'headers' => array( 'Content-Type' => 'application/json' ) );
       return $contexts;
    }
 
