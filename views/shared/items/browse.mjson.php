@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // Start with an empty array of item metadata
 $multipleItemMetadata = array();
@@ -6,19 +6,22 @@ $multipleItemMetadata = array();
 // Loop through each item, picking up the minimum information needed.
 // There will be no pagination, since the amount of information for each
 // item will remain quite small.
-while( loop_items() ) {
-   $item = get_current_item();
-
+foreach( loop( 'item' ) as $item )
+{
    $itemMetadata = array();
 
-   $itemMetadata['id'] = item( 'id' );
+   // Add the item ID and title
+   $itemMetadata['id'] = $item->id;
    $itemMetadata['title'] = html_entity_decode(
-      strip_formatting( item( 'Dublin Core', 'Title' ) ) );
+      strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
+
+   $itemMetadata['description'] = html_entity_decode(
+      strip_formatting( metadata( 'item', array( 'Dublin Core', 'Description' ) ) ) );
 
    // Add location information if there is any available.
-   $location = get_db()->getTable(
-      'Location' )->findLocationByItem( $item, true );
-   if( $location ) {
+   $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
+   if( $location )
+   {
       $itemLatitude = $location['latitude'];
       $itemLongitude = $location['longitude'];
 
@@ -28,22 +31,14 @@ while( loop_items() ) {
             'longitude' => $itemLongitude,
          )
       );
-
-      /* DISABLED: I don't know where this function comes from.
-      if( $itemLatitude && $itemLongitude ) {
-         $itemMetadata['distance_away_miles'] = geocode_measure_distance(
-            $_GET['latitude'], $_GET['longitude'],
-            $itemLatitude, $itemLongitude );
-      }
-       */
    }
 
-   array_push($multipleItemMetadata, $itemMetadata);
+   array_push( $multipleItemMetadata, $itemMetadata );
 }
 
 $metadata = array(
    'items'        => $multipleItemMetadata,
-   'total_items'  => total_results(),
+   'total_items'  => count( $multipleItemMetadata )
 );
 
 // I've heard that the Zend JSON encoder is really slow,

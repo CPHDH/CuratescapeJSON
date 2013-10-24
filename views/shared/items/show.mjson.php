@@ -2,56 +2,57 @@
 
 // Get the basic data
 $itemMetadata = array(
-   'id'           => item( 'id'),
-   'subject'      => item( 'Dublin Core', 'Subject'),
-   'description'  => item( 'Dublin Core', 'Description'),
-   'creator'      => item( 'Dublin Core', 'Creator'),
-   'source'       => item( 'Dublin Core', 'Source'),
-   'publisher'    => item( 'Dublin Core', 'Publisher'),
-   'date'         => item( 'Dublin Core', 'Date'),
+   'id'           => $item->id,
+   'subject'      => metadata( 'item', array( 'Dublin Core', 'Subject' ) ),
+   'description'  => metadata( 'item', array( 'Dublin Core', 'Description' ) ),
+   'creator'      => metadata( 'item', array( 'Dublin Core', 'Creator' ) ),
+   'source'       => metadata( 'item', array( 'Dublin Core', 'Source' ) ),
+   'publisher'    => metadata( 'item', array( 'Dublin Core', 'Publisher' ) ),
+   'date'         => metadata( 'item', array( 'Dublin Core', 'Date' ) ),
 );
 
 $itemMetadata['title'] = html_entity_decode(
-   strip_formatting( item( 'Dublin Core', 'Title' ) ) );
+   strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
 
 //
 // FILES
 //
-if( item_has_files() ) {
-   $files = array();
-   while( loop_files_for_item( $item ) ) {
-      $file = get_current_file();
-      $path = $file->getWebPath( 'archive' );
+$files = array();
+foreach( $item->Files as $file )
+{
+   $path = $file->getWebPath( 'original' );
 
-      $mimetype = $this->fileMetadata( $file, 'mime type' );
-      $filedata = array(
-         'id'        => $this->fileMetadata( $file, 'id' ),
-         'mime-type' => $mimetype,
-         'size'      => $this->fileMetadata( $file, 'size' ),
-      );
+   $mimetype = metadata( $file, 'MIME Type' );
+   $filedata = array(
+      'id'        => $file->id,
+      'mime-type' => $mimetype,
+      'size'      => $file->size );
 
-      $title = $this->fileMetadata( $file, 'Dublin Core', 'Title' );
-      if( $title ) {
-         $filedata['title'] = strip_formatting( $title );
-      }
-
-      if( strpos( $mimetype, 'image' ) === 0 ) {
-         list( $width, $height ) = getimagesize( $file->getWebPath( 'archive' ) );
-         $filedata[ 'width' ] = $width;
-         $filedata[ 'height' ] = $height;
-      }
-
-      $description = $this->fileMetadata( $file, 'Dublin Core', 'Description' );
-      if( $description ) {
-         $filedata['description'] = $description;
-      }
-
-      if( $file->hasThumbnail() ) {
-         $filedata['thumbnail'] = $file->getWebPath( 'square_thumbnail' );
-      }
-
-      $files[ $path ] = $filedata;
+   $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
+   if( $title ) {
+      $filedata['title'] = strip_formatting( $title );
    }
+
+   if( strpos( $mimetype, 'image/' ) === 0 ) {
+      list( $width, $height ) = getimagesize( $file->getWebPath( 'original' ) );
+      $filedata[ 'width' ] = $width;
+      $filedata[ 'height' ] = $height;
+   }
+
+   $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
+   if( $description ) {
+      $filedata['description'] = $description;
+   }
+
+   if( $file->hasThumbnail() ) {
+      $filedata['thumbnail'] = $file->getWebPath( 'square_thumbnail' );
+   }
+
+   $files[ $path ] = $filedata;
+}
+
+if( count( $files ) > 0 )
+{
    $itemMetadata['files'] = $files;
 }
 
