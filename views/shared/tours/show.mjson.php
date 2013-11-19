@@ -5,21 +5,19 @@ $items = array();
 foreach( $tour->Items as $item )
 {
    set_current_record( 'item', $item );
-
+   $location = get_db()->getTable('Location')->findLocationByItem($item, true);
+   
+   // If it has a location, we'll build the itemMetadata array and push it to items
+   if($location){
    $item_metadata = array(
       'id'          => $item->id,
-      'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) )   
+      'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) ),
+	  'latitude' 	=> $location['latitude'],
+	  'longitude' 	=> $location['longitude']      
    );
-
-   $location = plugin_is_active('Geolocation','2.0') ? get_db()->getTable('Location')->findLocationByItem($item, true) : false;
-   if($location){
-	   array_push($item_metadata, array(
-	   	'latitude' => $location['latitude'],
-	   	'longitude' => $location['longitude']
-	   	));
-   }
-
    array_push( $items, $item_metadata );
+   }
+  
 }
 
 // Create the array of data
