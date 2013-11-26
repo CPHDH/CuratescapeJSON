@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 // Start with an empty array of item metadata
 $multipleItemMetadata = array();
@@ -6,36 +6,41 @@ $multipleItemMetadata = array();
 // Loop through each item, picking up the minimum information needed.
 // There will be no pagination, since the amount of information for each
 // item will remain quite small.
-while( loop_items() ) {
-   $item = get_current_item();
-   $location = get_db()->getTable('Location' )->findLocationByItem( $item, true );
+foreach( loop( 'item' ) as $item )
+{
+
+
+   // If it doesn't have location data, we're not interested.
+   $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
+   if( $location )
+   {
    
-   if((item('public'))&&($location)){ // make sure the item is public and has location data
-   
-	   $itemMetadata = array();
+	$itemMetadata = array();
 	
-	   $itemMetadata['id'] = item( 'id' );
-	   $itemMetadata['title'] = html_entity_decode(
-	      strip_formatting( item( 'Dublin Core', 'Title' ) ) );
+	// Add the item ID and title
+	$itemMetadata['id'] = $item->id;
+	$itemMetadata['title'] = html_entity_decode(
+	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
 	
-	      $itemLatitude = $location['latitude'];
-	      $itemLongitude = $location['longitude'];
+	// Add the description
+	$itemMetadata['description'] = html_entity_decode(
+	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Description' ) ) ) );   
 	
-	      $itemMetadata = array_merge( $itemMetadata,
-	         array(
-	            'latitude' => $itemLatitude,
-	            'longitude' => $itemLongitude,
-	         )
-	      );
-	  
-	   array_push($multipleItemMetadata, $itemMetadata);
+	// Add the location
+	$itemMetadata['latitude'] = $location['latitude'];
+	$itemMetadata['longitude'] = $location['longitude'];
+
+
+   array_push( $multipleItemMetadata, $itemMetadata );
    
    }
+
+   
 }
 
 $metadata = array(
    'items'        => $multipleItemMetadata,
-   'total_items'  => total_results(),
+   'total_items'  => count( $multipleItemMetadata )
 );
 
 // I've heard that the Zend JSON encoder is really slow,
