@@ -26,6 +26,11 @@ foreach( loop( 'item' ) as $item )
                           array( 'all' => true ) );
       $authors = metadata( 'item', array( 'Dublin Core', 'Creator' ),
                           array( 'all' => true ) );
+      $authorsStripped = array();
+      foreach( $authors as $auth )
+      {
+         $authorsStripped[] = html_entity_decode( strip_formatting( $auth ) );
+      }
 
       $itemMetadata = array(
          'id'          => $item->id,
@@ -36,7 +41,7 @@ foreach( loop( 'item' ) as $item )
          'latitude'    => $location[ 'latitude' ],
          'longitude'   => $location[ 'longitude' ],
 
-         'creator'     => getDublinText( 'Creator' ),
+         'creator'     => $authorsStripped,
          'date'        => getDublinText( 'Date' ),
          'description' => getDublinText( 'Description', true ),
          'publisher'   => getDublinText( 'Publisher' ),
