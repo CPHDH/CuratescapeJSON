@@ -16,6 +16,13 @@ function getDublinText( $element, $formatted = false )
    return html_entity_decode( $raw );
 }
 
+function has_element( $name )
+{
+   return count( get_records( 'Element', array( 'element_name' => $name ) ) ) > 0;
+}
+
+$hasSponsor = has_element( 'Sponsor Name' );
+
 foreach( loop( 'item' ) as $item )
 {
    // If it doesn't have location data, we're not interested.
@@ -57,10 +64,13 @@ foreach( loop( 'item' ) as $item )
          $itemMetadata[ 'subtitle' ] = html_entity_decode( strip_formatting( $titles[1] ) );
       }
 
-      // Add curatescape specifics (if they're there)
-      if( $sponsor = metadata( 'item', array( 'Item Type Metadata', 'Sponsor Name' ) ) )
+      // Add sponsor (if it exists in the database)
+      if( $hasSponsor )
       {
-         $itemMetadata[ 'sponsor' ] = html_entity_decode( strip_formatting( $sponsor ) );
+         if( $sponsor = metadata( 'item', array( 'Item Type Metadata', 'Sponsor Name' ) ) )
+         {
+            $itemMetadata[ 'sponsor' ] = html_entity_decode( strip_formatting( $sponsor ) );
+         }
       }
 
       array_push( $multipleItemMetadata, $itemMetadata );
