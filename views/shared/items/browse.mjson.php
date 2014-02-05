@@ -47,13 +47,20 @@ foreach( loop( 'item' ) as $item )
          'publisher'   => getDublinText( 'Publisher' ),
          'source'      => getDublinText( 'Source' ),
          'subject'     => getDublinText( 'Subject' ),
-         'title'       => html_entity_decode( strip_formatting( $titles[0] ) )
+         'title'       => html_entity_decode( strip_formatting( $titles[0] ) ),
+
       );
 
       // Add the subtitle (if available)
       if( count( $titles ) > 1 )
       {
          $itemMetadata[ 'subtitle' ] = html_entity_decode( strip_formatting( $titles[1] ) );
+      }
+
+      // Add curatescape specifics (if they're there)
+      if( $sponsor = metadata( 'item', array( 'Item Type Metadata', 'Sponsor Name' ) ) )
+      {
+         $itemMetadata[ 'sponsor' ] = html_entity_decode( strip_formatting( $sponsor ) );
       }
 
       array_push( $multipleItemMetadata, $itemMetadata );
