@@ -26,17 +26,12 @@ foreach( $item->Files as $file )
    $filedata = array(
       'id'        => $file->id,
       'mime-type' => $mimetype,
-      'size'      => $file->size );
+      'size'      => $file->size,
+      'modified'  => $file->modified );
 
    $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
    if( $title ) {
       $filedata['title'] = strip_formatting( $title );
-   }
-
-   if( strpos( $mimetype, 'image/' ) === 0 ) {
-      list( $width, $height ) = getimagesize( $file->getWebPath( 'original' ) );
-      $filedata[ 'width' ] = $width;
-      $filedata[ 'height' ] = $height;
    }
 
    $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
