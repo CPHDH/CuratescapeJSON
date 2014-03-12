@@ -6,7 +6,6 @@ $multipleItemMetadata = array();
 // Loop through each item, picking up the minimum information needed.
 // There will be no pagination, since the amount of information for each
 // item will remain quite small.
-foreach( loop( 'item' ) as $item )
 
 function getDublinText( $element, $formatted = false )
 {
@@ -25,30 +24,41 @@ function has_element( $name )
 $hasSponsor = has_element( 'Sponsor Name' );
 $storage = Zend_Registry::get('storage');
 
+foreach( loop( 'item' ) as $item )
+{
    // If it doesn't have location data, we're not interested.
    $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
    if( $location )
    {
-   
-	$itemMetadata = array();
-	
-	// Add the item ID and title
-	$itemMetadata['id'] = $item->id;
-	$itemMetadata['title'] = html_entity_decode(
-	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
-	
-	// Add the description
-	$itemMetadata['description'] = html_entity_decode(
-	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Description' ) ) ) );   
-	
-	// Add the location
-	$itemMetadata['latitude'] = $location['latitude'];
-	$itemMetadata['longitude'] = $location['longitude'];
+      $titles = metadata( 'item', array( 'Dublin Core', 'Title' ),
+                          array( 'all' => true ) );
+      $authors = metadata( 'item', array( 'Dublin Core', 'Creator' ),
+                          array( 'all' => true ) );
+      $authorsStripped = array();
+      foreach( $authors as $auth )
+      {
+         $authorsStripped[] = html_entity_decode( strip_formatting( $auth ) );
+      }
 
+      $itemMetadata = array(
+         'id'          => $item->id,
+         'modified'    => $item->modified,
+         'featured'    => $item->featured,
 
-   array_push( $multipleItemMetadata, $itemMetadata );
-   
-   }
+         'latitude'    => $location[ 'latitude' ],
+         'longitude'   => $location[ 'longitude' ],
+
+         'creator'     => $authorsStripped,
+         'description' => getDublinText( 'Description', true ),
+         'title'       => html_entity_decode( strip_formatting( $titles[0] ) ),
+      );
+
+      // Add the subtitle (if available)
+      if( count( $titles ) > 1 )
+      {
+         $itemMetadata[ 'subtitle' ] = html_entity_decode( strip_formatting( $titles[1] ) );
+      }
+
       // Add sponsor (if it exists in the database)
       if( $hasSponsor )
       {
@@ -103,6 +113,10 @@ $storage = Zend_Registry::get('storage');
       {
          $itemMetadata[ 'files' ] = $files;
       }
+
+      array_push( $multipleItemMetadata, $itemMetadata );
+
+   }
 }
 
 $metadata = array(
