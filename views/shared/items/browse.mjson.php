@@ -22,6 +22,7 @@ function has_element( $name )
    return count( get_records( 'Element', array( 'element_name' => $name ) ) ) > 0;
 }
 
+$hasSponsor = has_element( 'Sponsor Name' );
 
    // If it doesn't have location data, we're not interested.
    $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
@@ -47,6 +48,15 @@ function has_element( $name )
    array_push( $multipleItemMetadata, $itemMetadata );
    
    }
+      // Add sponsor (if it exists in the database)
+      if( $hasSponsor )
+      {
+         if( $sponsor = metadata( 'item', array( 'Item Type Metadata', 'Sponsor Name' ) ) )
+         {
+            $itemMetadata[ 'sponsor' ] = html_entity_decode( strip_formatting( $sponsor ) );
+         }
+      }
+
 
    
 }
