@@ -39,9 +39,29 @@ foreach( $item->Files as $file )
       $filedata[ 'height' ] = $height;
    }
 
+   // Build caption from description, source, and creator
+   
+   $caption=array();
+   
    $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
    if( $description ) {
-      $filedata['description'] = $description;
+      $caption[]= $description;
+   }
+   
+   
+   $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
+   if( $source ) {
+   		$caption[]= 'Source: '.$source;
+   }
+   
+
+   $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
+   if( $creator ) {
+   		$caption[]= 'Creator: '.$creator;
+   }   
+   
+   if( count($caption) ){
+	   $filedata['description'] = implode(" | ", $caption);
    }
 
    if( $file->hasThumbnail() ) {
