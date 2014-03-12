@@ -7,7 +7,20 @@ $multipleItemMetadata = array();
 // There will be no pagination, since the amount of information for each
 // item will remain quite small.
 foreach( loop( 'item' ) as $item )
+
+function getDublinText( $element, $formatted = false )
 {
+   $raw = metadata( 'item', array( 'Dublin Core', $element ) );
+   if( ! $formatted )
+      $raw = strip_formatting( $raw );
+
+   return html_entity_decode( $raw );
+}
+
+function has_element( $name )
+{
+   return count( get_records( 'Element', array( 'element_name' => $name ) ) ) > 0;
+}
 
 
    // If it doesn't have location data, we're not interested.
