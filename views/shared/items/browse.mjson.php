@@ -9,8 +9,8 @@ $multipleItemMetadata = array();
 foreach( loop( 'item' ) as $item )
 {
    // If it doesn't have location data, we're not interested.
-   $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
-   if( $location )
+   $hasLocation = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
+   if( $hasLocation )
    {
       $itemMetadata = $this->itemJsonifier( $item );
       array_push( $multipleItemMetadata, $itemMetadata );

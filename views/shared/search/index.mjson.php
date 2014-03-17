@@ -11,17 +11,14 @@ foreach( loop('search_texts') as $searchText )
    if( $isItem )
    {
 		// do something...
-		$id=$searchText->record_id;
-		$item=get_record_by_id('item',$id); 
-		if($location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true ))
+		$id = $searchText->record_id;
+		$item = get_record_by_id( 'item', $id );
+
+      // If it doesn't have location data, we're not interested.
+      $hasLocation = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
+		if( $hasLocation )
 		{
-			$itemMetadata = array(
-		         'id'          => $item->id,		
-		         'latitude'    => $location[ 'latitude' ],
-		         'longitude'   => $location[ 'longitude' ],
-		         'title'       => html_entity_decode( strip_formatting( metadata($item,array('Dublin Core','Title'),false) ) ),
-			);
-			
+         $itemMetadata = $this->itemJsonifier( $item );
 			array_push( $multipleItemMetadata, $itemMetadata );
 		}
    }
