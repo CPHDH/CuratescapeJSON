@@ -26,10 +26,12 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
       $controller = $args['controller'];
 
       if( is_a( $controller, 'ItemsController' ) or
-          is_a( $controller, 'TourBuilder_ToursController' ) )
+          is_a( $controller, 'TourBuilder_ToursController' ) or 
+          is_a( $controller, 'SearchController' ) )
       {
          $contexts['browse'][] = 'mobile-json' ;
          $contexts['show'][] = 'mobile-json' ;
+         $contexts['index'][] = 'mobile-json' ;
       }
 
       return $contexts;
