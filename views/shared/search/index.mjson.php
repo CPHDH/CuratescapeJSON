@@ -7,10 +7,8 @@ $searchRecordTypes = get_search_record_types();
 // Just get the items that can be mapped...
 foreach( loop('search_texts') as $searchText )
 {
-   // If it doesn't have location data, we're not interested.
-   
-   $isItem= ($searchRecordTypes[$searchText['record_type']]=='Item') ? true : false;
-   if($isItem)
+   $isItem = $searchRecordTypes[ $searchText[ 'record_type' ] ] == 'Item';
+   if( $isItem )
    {
 		// do something...
 		$id=$searchText->record_id;
