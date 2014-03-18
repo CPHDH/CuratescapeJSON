@@ -7,13 +7,8 @@ $all_tours_metadata = array();
 foreach( $tours as $tour )
 {
    set_current_record( 'tour', $tour );
-   $tour_metadata = array(
-      'id'     => tour( 'id' ),
-      'title'  => tour( 'title' ),
-      'description' => metadata( 'tour', 'Description' ),
-   );
-
-   array_push( $all_tours_metadata, $tour_metadata );
+   $tourMetadata = $this->tourJsonifier( $tour );
+   array_push( $all_tours_metadata, $tourMetadata );
 }
 
 $metadata = array(

@@ -8,34 +8,13 @@ $multipleItemMetadata = array();
 // item will remain quite small.
 foreach( loop( 'item' ) as $item )
 {
-
-
    // If it doesn't have location data, we're not interested.
-   $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
-   if( $location )
+   $hasLocation = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
+   if( $hasLocation )
    {
-   
-	$itemMetadata = array();
-	
-	// Add the item ID and title
-	$itemMetadata['id'] = $item->id;
-	$itemMetadata['title'] = html_entity_decode(
-	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) );
-	
-	// Add the description
-	$itemMetadata['description'] = html_entity_decode(
-	strip_formatting( metadata( 'item', array( 'Dublin Core', 'Description' ) ) ) );   
-	
-	// Add the location
-	$itemMetadata['latitude'] = $location['latitude'];
-	$itemMetadata['longitude'] = $location['longitude'];
-
-
-   array_push( $multipleItemMetadata, $itemMetadata );
-   
+      $itemMetadata = $this->itemJsonifier( $item );
+      array_push( $multipleItemMetadata, $itemMetadata );
    }
-
-   
 }
 
 $metadata = array(
