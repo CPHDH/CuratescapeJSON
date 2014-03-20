@@ -79,12 +79,6 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
             $filedata[ 'title' ] = strip_formatting( $title );
          }
 
-         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
-         if( $description )
-         {
-            $filedata[ 'description' ] = $description;
-         }
-
          if( $file->hasThumbnail() )
          {
             $filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
@@ -96,6 +90,30 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
             list( $width, $height ) = getimagesize( $p );
             $filedata[ 'width' ] = $width;
             $filedata[ 'height' ] = $height;
+         }
+
+         $caption = array();
+         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
+         if( $description )
+         {
+            $caption[] = $description;
+         }
+
+         $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
+         if( $source )
+         {
+            $caption[] = $source;
+         }
+
+         $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
+         if( $creator )
+         {
+            $caption[] = $creator;
+         }
+
+         if( count( $caption ) )
+         {
+            $filedata[ 'description' ] = implode( " | ", $caption );
          }
 
          $files[ $path ] = $filedata;
