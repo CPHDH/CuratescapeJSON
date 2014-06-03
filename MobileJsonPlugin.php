@@ -19,6 +19,9 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
       $contexts['mobile-json'] = array(
          'suffix' => 'mjson',
          'headers' => array( 'Content-Type' => 'application/json' ) );
+      $contexts['tiny-mobile-json'] = array(
+         'suffix' => 'tmjson',
+         'headers' => array( 'Content-Type' => 'application/json' ) );
       return $contexts;
    }
 
@@ -30,6 +33,7 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
           is_a( $controller, 'SearchController' ) )
       {
          $contexts['browse'][] = 'mobile-json' ;
+         $contexts['browse'][] = 'tiny-mobile-json' ;
          $contexts['show'][] = 'mobile-json' ;
          $contexts['index'][] = 'mobile-json' ;
       }

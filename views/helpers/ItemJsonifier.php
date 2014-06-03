@@ -19,7 +19,7 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
    }
 
 
-   public function itemJsonifier( $item )
+   public function itemJsonifier( $item, $isTiny = false )
    {
       // If it doesn't have location data, we're not interested.
       $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
@@ -35,16 +35,19 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
 
       $itemMetadata = array(
          'id'          => $item->id,
-         'modified'    => $item->modified,
          'featured'    => $item->featured,
 
          'latitude'    => $location[ 'latitude' ],
          'longitude'   => $location[ 'longitude' ],
 
-         'creator'     => $authorsStripped,
-         'description' => self::getDublinText( 'Description', true ),
          'title'       => html_entity_decode( strip_formatting( $titles[0] ) ),
-                            );
+          );
+          
+	      if(!$isTiny){
+		      $itemMetadata['modified']=$item->modified;
+		      $itemMetadata['creator']=$authorsStripped;
+		      $itemMetadata['description']=self::getDublinText( 'Description', true );
+	      }                      
 
       // Add the subtitle (if available)
       if( count( $titles ) > 1 )
@@ -61,68 +64,70 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
          }
       }
 
-      // Add files (version 2 does full sync immediately)
-      $files = array();
-      foreach( $item->Files as $file )
-      {
-         $path = $file->getWebPath( 'original' );
-         $mimetype = metadata( $file, 'MIME Type' );
-
-         $filedata = array(
-            'id'        => $file->id,
-            'mime-type' => $mimetype,
-            'modified'  => $file->modified );
-
-         $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
-         if( $title )
-         {
-            $filedata[ 'title' ] = strip_formatting( $title );
-         }
-
-         if( $file->hasThumbnail() )
-         {
-            $filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
-         }
-
-         if( strpos( $mimetype, 'image/' ) === 0 )
-         {
-            $p = $this->storage->getPathByType( $file->getStoragePath() );
-            list( $width, $height ) = getimagesize( $p );
-            $filedata[ 'width' ] = $width;
-            $filedata[ 'height' ] = $height;
-         }
-
-         $caption = array();
-         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
-         if( $description )
-         {
-            $caption[] = $description;
-         }
-
-         $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
-         if( $source )
-         {
-            $caption[] = $source;
-         }
-
-         $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
-         if( $creator )
-         {
-            $caption[] = $creator;
-         }
-
-         if( count( $caption ) )
-         {
-            $filedata[ 'description' ] = implode( " | ", $caption );
-         }
-
-         $files[ $path ] = $filedata;
-
-      }
-
-      if( count( $files ) > 0 )
-      {
-         $itemMetadata[ 'files' ] = $files;
+      if(!$isTiny){
+	      // Add files (version 2 does full sync immediately)
+	      $files = array();
+	      foreach( $item->Files as $file )
+	      {
+	         $path = $file->getWebPath( 'original' );
+	         $mimetype = metadata( $file, 'MIME Type' );
+	
+	         $filedata = array(
+	            'id'        => $file->id,
+	            'mime-type' => $mimetype,
+	            'modified'  => $file->modified );
+	
+	         $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
+	         if( $title )
+	         {
+	            $filedata[ 'title' ] = strip_formatting( $title );
+	         }
+	
+	         if( $file->hasThumbnail() )
+	         {
+	            $filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
+	         }
+	
+	         if( strpos( $mimetype, 'image/' ) === 0 )
+	         {
+	            $p = $this->storage->getPathByType( $file->getStoragePath() );
+	            list( $width, $height ) = getimagesize( $p );
+	            $filedata[ 'width' ] = $width;
+	            $filedata[ 'height' ] = $height;
+	         }
+	
+	         $caption = array();
+	         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
+	         if( $description )
+	         {
+	            $caption[] = $description;
+	         }
+	
+	         $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
+	         if( $source )
+	         {
+	            $caption[] = $source;
+	         }
+	
+	         $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
+	         if( $creator )
+	         {
+	            $caption[] = $creator;
+	         }
+	
+	         if( count( $caption ) )
+	         {
+	            $filedata[ 'description' ] = implode( " | ", $caption );
+	         }
+	
+	         $files[ $path ] = $filedata;
+	
+	      }
+	
+	      if( count( $files ) > 0 )
+	      {
+	         $itemMetadata[ 'files' ] = $files;
+	      }
       }
 
       return $itemMetadata;
