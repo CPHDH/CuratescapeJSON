@@ -35,6 +35,7 @@ class MobileJsonPlugin extends Omeka_Plugin_AbstractPlugin
          $contexts['browse'][] = 'mobile-json' ;
          $contexts['browse'][] = 'tiny-mobile-json' ;
          $contexts['show'][] = 'mobile-json' ;
+         $contexts['show'][] = 'tiny-mobile-json' ;
          $contexts['index'][] = 'mobile-json' ;
       }
 
