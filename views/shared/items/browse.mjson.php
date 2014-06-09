@@ -1,8 +1,5 @@
 <?php
 
-// Start with an empty array of item metadata
-$multipleItemMetadata = array();
-
 echo '{"items":[';
 
 // Loop through each item, picking up the minimum information needed.

@@ -1,19 +1,22 @@
 <?php
 
-// Start with an empty array of tours
-$all_tours_metadata = array();
+echo '{"tours":[';
+
+$tourCount = 0;
 
 // Loop through all the tours
 foreach( $tours as $tour )
 {
+   if( $tourCount > 0 )
+   {
+      echo ',';
+   }
+
    set_current_record( 'tour', $tour );
    $tourMetadata = $this->tourJsonifier( $tour );
-   array_push( $all_tours_metadata, $tourMetadata );
+   echo Zend_Json_Encoder::encode( $tourMetadata );
+
+   $tourCount += 1;
 }
 
-$metadata = array(
-   'tours'  => $all_tours_metadata,
-);
-
-// Encode and send
-echo Zend_Json_Encoder::encode( $metadata );
+echo '] }';
