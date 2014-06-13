@@ -34,6 +34,9 @@ class MobileJson_View_Helper_TourJsonifier extends Zend_View_Helper_Abstract
          'id'           => $tour->id,
          'title'        => $tour->title,
          'description'  => $tour->description,
+         'image'        => $tour->image(false),
+         'thumbnail'    => $tour->thumbnail(false),
+         'square_thumbnail' => $tour->square_thumbnail(false),
          'items'        => $items );
 
       return $tour_metadata;
