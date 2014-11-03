@@ -4,8 +4,17 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
 {
    public function __construct()
    {
-      // Determine if the item type schemas have a 'Sponsor Name' element
-      $this->hasSponsor = count( get_records( 'Element', array( 'element_name' => 'Sponsor Name' ) ) ) > 0;
+      // Determine if the item type schemas have custom elements
+      $this->hasStory = element_exists('Item Type Metadata','Story');
+      $this->hasSubtitle = element_exists('Item Type Metadata','Subtitle');      
+      $this->hasSponsor = element_exists('Item Type Metadata','Sponsor');
+      $this->hasLede = element_exists('Item Type Metadata','Lede');
+      $this->hasAccessInfo = element_exists('Item Type Metadata','Access Information');
+      $this->hasWebsite = element_exists('Item Type Metadata','Official Website');
+      $this->hasStreetAddress = element_exists('Item Type Metadata','Street Address');
+      $this->hasFactoid = element_exists('Item Type Metadata','Factoid');
+      $this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');
+      
       $this->storage = Zend_Registry::get('storage');
    }
 
@@ -18,8 +27,16 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
       return html_entity_decode( $raw );
    }
 
+   private static function getItemTypeText( $element, $formatted = false )
+   {
+      $raw = metadata( 'item', array( 'Item Type Metadata', $element ) );
+      if( ! $formatted )
+         $raw = strip_formatting( $raw );
 
-   public function itemJsonifier( $item )
+      return html_entity_decode( $raw );
+   }
+	
+   public function itemJsonifier( $item, $isTiny = false )
    {
       // If it doesn't have location data, we're not interested.
       $location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
@@ -35,94 +52,146 @@ class MobileJson_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstract
 
       $itemMetadata = array(
          'id'          => $item->id,
-         'modified'    => $item->modified,
          'featured'    => $item->featured,
-
          'latitude'    => $location[ 'latitude' ],
          'longitude'   => $location[ 'longitude' ],
-
-         'creator'     => $authorsStripped,
-         'description' => self::getDublinText( 'Description', true ),
          'title'       => html_entity_decode( strip_formatting( $titles[0] ) ),
-                            );
+          );
 
-      // Add the subtitle (if available)
-      if( count( $titles ) > 1 )
-      {
-         $itemMetadata[ 'subtitle' ] = html_entity_decode( strip_formatting( $titles[1] ) );
-      }
 
-      // Add sponsor (if it exists in the database)
-      if( $this->hasSponsor )
-      {
-         if( $sponsor = metadata( 'item', array( 'Item Type Metadata', 'Sponsor Name' ) ) )
-         {
-            $itemMetadata[ 'sponsor' ] = html_entity_decode( strip_formatting( $sponsor ) );
-         }
-      }
+	      if( $this->hasStreetAddress)
+	      {
+	          $itemMetadata['address']=self::getItemTypeText('Street Address',true);
+	      }
+          
+	      if(!$isTiny){
+	      
+		      $itemMetadata['modified']=$item->modified;
+		      $itemMetadata['creator']=$authorsStripped;
 
-      // Add files (version 2 does full sync immediately)
-      $files = array();
-      foreach( $item->Files as $file )
-      {
-         $path = $file->getWebPath( 'original' );
-         $mimetype = metadata( $file, 'MIME Type' );
+		      
+		      if( $this->hasStory)
+		      {
+		          $itemMetadata['description']=self::getItemTypeText('Story',true);
+		      }
+		      
+		      if(!$itemMetadata['description'])
+		      {
+			      $itemMetadata['description']=self::getDublinText( 'Description', true );
+		      }
+		
+		      if( $this->hasLede )
+		      {
+		         $itemMetadata['lede']=self::getItemTypeText('Lede');
+		      }
+		      
+		      if( $this->hasSponsor )
+		      {
+				 $itemMetadata['sponsor']=self::getItemTypeText('Sponsor');;
+		      }
+		
+		      if( $this->hasSubtitle )
+		      {
+				 $itemMetadata['subtitle'] = self::getItemTypeText('Subtitle');
+		      }
+		      
+		      if( !$itemMetadata['subtitle'] && count( $titles ) > 1 )
+		      {
+		         $itemMetadata['subtitle'] = html_entity_decode( strip_formatting( $titles[1] ) );
+		      }
+		
+		      if( $this->hasAccessInfo )
+		      {
+		         $itemMetadata[ 'accessinfo' ] = self::getItemTypeText('Access Information');
+		      }      
 
-         $filedata = array(
-            'id'        => $file->id,
-            'mime-type' => $mimetype,
-            'modified'  => $file->modified );
+		      if( $this->hasWebsite )
+		      {
+		         $itemMetadata[ 'website' ] = self::getItemTypeText('Official Website',true);
+		      }  
 
-         $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
-         if( $title )
-         {
-            $filedata[ 'title' ] = strip_formatting( $title );
-         }
+		      if( $this->hasRelatedResources )
+		      {
+		         $itemMetadata[ 'related-resources' ] = self::getItemTypeText('Related Resources',true);
+		      } 
 
-         if( $file->hasThumbnail() )
-         {
-            $filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
-         }
+		      if( $this->hasFactoid )
+		      {
+		         $itemMetadata[ 'factoid' ] = self::getItemTypeText('Factoid',true);
+		      } 
 
-         if( strpos( $mimetype, 'image/' ) === 0 )
-         {
-            $p = $this->storage->getPathByType( $file->getStoragePath() );
-            list( $width, $height ) = getimagesize( $p );
-            $filedata[ 'width' ] = $width;
-            $filedata[ 'height' ] = $height;
-         }
+	      }                      
 
-         $caption = array();
-         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
-         if( $description )
-         {
-            $caption[] = $description;
-         }
 
-         $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
-         if( $source )
-         {
-            $caption[] = $source;
-         }
 
-         $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
-         if( $creator )
-         {
-            $caption[] = $creator;
-         }
+	  if($isTiny==true && metadata($item, 'has thumbnail')){
+     		$itemMetadata[ 'thumbnail' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('square_thumbnail'), $result)) ? array_pop($result) : null;
+     	}
 
-         if( count( $caption ) )
-         {
-            $filedata[ 'description' ] = implode( " | ", $caption );
-         }
-
-         $files[ $path ] = $filedata;
-
-      }
-
-      if( count( $files ) > 0 )
-      {
-         $itemMetadata[ 'files' ] = $files;
+      if(!$isTiny){
+	      // Add files (version 2 does full sync immediately)
+	      $files = array();
+	      foreach( $item->Files as $file )
+	      {
+	         $path = $file->getWebPath( 'original' );
+	         $mimetype = metadata( $file, 'MIME Type' );
+	
+	         $filedata = array(
+	            'id'        => $file->id,
+	            'mime-type' => $mimetype,
+	            'modified'  => $file->modified );
+	
+	         $title = metadata( $file, array( 'Dublin Core', 'Title' ) );
+	         if( $title )
+	         {
+	            $filedata[ 'title' ] = strip_formatting( $title );
+	         }
+	
+	         if( $file->hasThumbnail() )
+	         {
+	            $filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
+	         }
+	
+	         if( strpos( $mimetype, 'image/' ) === 0 )
+	         {
+	            $p = $this->storage->getPathByType( $file->getStoragePath() );
+	            list( $width, $height ) = getimagesize( $p );
+	            $filedata[ 'width' ] = $width;
+	            $filedata[ 'height' ] = $height;
+	         }
+	
+	         $caption = array();
+	         $description = metadata( $file, array( 'Dublin Core', 'Description' ) );
+	         if( $description )
+	         {
+	            $caption[] = $description;
+	         }
+	
+	         $source = metadata( $file, array( 'Dublin Core', 'Source' ) );
+	         if( $source )
+	         {
+	            $caption[] = $source;
+	         }
+	
+	         $creator = metadata( $file, array( 'Dublin Core', 'Creator' ) );
+	         if( $creator )
+	         {
+	            $caption[] = $creator;
+	         }
+	
+	         if( count( $caption ) )
+	         {
+	            $filedata[ 'description' ] = implode( " | ", $caption );
+	         }
+	
+	         $files[ $path ] = $filedata;
+	
+	      }
+	
+	      if( count( $files ) > 0 )
+	      {
+	         $itemMetadata[ 'files' ] = $files;
+	      }
       }
 
       return $itemMetadata;

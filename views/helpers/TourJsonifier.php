@@ -23,7 +23,16 @@ class MobileJson_View_Helper_TourJsonifier extends Zend_View_Helper_Abstract
                'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) ),
                'latitude' 	=> $location['latitude'],
                'longitude' 	=> $location['longitude']
-                                   );
+                );
+
+				if( element_exists('Item Type Metadata','Street Address') )
+				{
+					$address=metadata( 'item', array( 'Item Type Metadata', 'Street Address' ) );
+					if($address){
+						$item_metadata['address']=$address;
+					}
+				}
+                
             array_push( $items, $item_metadata );
          }
 
