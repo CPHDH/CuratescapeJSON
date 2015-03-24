@@ -39,11 +39,11 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 	public function itemJsonifier( $item, $isExtended = false )
 	{
 		/* Core metadata */
-		
+
 		$location = get_db()->getTable( 'Location' )->findLocationByItem( $item, true );
-		
+
 		$titles = metadata( 'item', array( 'Dublin Core', 'Title' ), array( 'all' => true ) );
-		
+
 		$itemMetadata = array(
 			'id'          => $item->id,
 			'featured'    => $item->featured,
