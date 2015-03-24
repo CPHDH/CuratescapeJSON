@@ -1,7 +1,7 @@
 <?php
 
 // Get the basic data
-$itemMetadata = $this->itemJsonifier( $item , true);
+$itemMetadata = $this->itemJsonifier( $item );
 
 // I've heard that the Zend JSON encoder is really slow,
 // if this becomes a problem, use the second line.
