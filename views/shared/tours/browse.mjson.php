@@ -19,4 +19,4 @@ foreach( $tours as $tour )
 	$tourCount += 1;
 }
 
-echo '] }';
+echo ']}';
