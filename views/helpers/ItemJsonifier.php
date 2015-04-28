@@ -146,7 +146,7 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 
 				if( $file->hasThumbnail() )
 				{
-					$filedata[ 'thumbnail' ] = $file->getWebPath( 'thumbnail' );
+					$filedata[ 'thumbnail' ] = $file->getWebPath( 'square_thumbnail' );
 				}
 
 				if( strpos( $mimetype, 'image/' ) === 0 )
