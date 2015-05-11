@@ -66,7 +66,7 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		if($isExtended){
 
 			$itemMetadata['modified']=$item->modified;
-			$itemMetadata['creator']=$authorsStripped;
+			
 
 			$authors = metadata( 'item', array( 'Dublin Core', 'Creator' ),array( 'all' => true ) );
 			$authorsStripped = array();
@@ -74,6 +74,8 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 			{
 				$authorsStripped[] = html_entity_decode( strip_formatting( $auth ) );
 			}
+			
+			$itemMetadata['creator']=$authorsStripped;
 
 
 			if( $this->hasStory)
