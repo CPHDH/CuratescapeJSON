@@ -130,7 +130,7 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 			$files = array();
 			foreach( $item->Files as $file )
 			{
-				$path = $file->getWebPath( 'original' );
+				
 				$mimetype = metadata( $file, 'MIME Type' );
 
 				$filedata = array(
@@ -151,10 +151,12 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 
 				if( strpos( $mimetype, 'image/' ) === 0 )
 				{
-					$p = $this->storage->getPathByType( $file->getStoragePath() );
-					list( $width, $height ) = getimagesize( $p );
+					$path = $file->getWebPath( 'fullsize' );
+					list( $width, $height ) = getimagesize( $path );
 					$filedata[ 'width' ] = $width;
 					$filedata[ 'height' ] = $height;
+				}else{
+					$path = $file->getWebPath( 'original' );
 				}
 
 				$caption = array();
