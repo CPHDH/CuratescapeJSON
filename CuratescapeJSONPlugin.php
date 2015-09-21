@@ -18,10 +18,10 @@ class CuratescapeJSONPlugin extends Omeka_Plugin_AbstractPlugin
 	{
 		$contexts['mobile-json'] = array(
 			'suffix' => 'mjson',
-			'headers' => array( 'Content-Type' => 'application/json' ) );
+			'headers' => array( 'Content-Type' => 'application/json','Access-Control-Allow-Origin'=>'*' ) );
 		$contexts['mobile-json-extended'] = array(
 			'suffix' => 'mjsonx',
-			'headers' => array( 'Content-Type' => 'application/json' ) );
+			'headers' => array( 'Content-Type' => 'application/json','Access-Control-Allow-Origin'=>'*'  ) );
 		return $contexts;
 	}
 
