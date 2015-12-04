@@ -43,6 +43,8 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 			'id'           => $tour->id,
 			'title'        => $tour->title,
 			'description'  => $tour->description,
+			'tour_image'   => $tour->tour_image,
+			'postscript_text' => $tour->postscript_text,
 			'items'        => $items );
 
 		$tourFiles = array();
