@@ -154,7 +154,13 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				if( strpos( $mimetype, 'image/' ) === 0 )
 				{
 					$path = $file->getWebPath( 'fullsize' );
-					list( $width, $height ) = getimagesize( $path );
+					if(phpversion() < 5.5){
+						list( $width, $height ) = getimagesize( $path );
+					}else{
+						// Need server path for getimagesize (starting w/ PHP 5.5+ ...I think)
+						$server_path=realpath($_SERVER['DOCUMENT_ROOT']).'/files/fullsize/'.$file->filename;
+						list( $width, $height ) = getimagesize( $server_path );
+					}
 					$filedata[ 'width' ] = $width;
 					$filedata[ 'height' ] = $height;
 				}else{
