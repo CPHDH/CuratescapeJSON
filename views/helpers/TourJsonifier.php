@@ -13,27 +13,29 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 		$items = array();
 		foreach( $tour->Items as $item )
 		{
-			set_current_record( 'item', $item );
-			$location = get_db()->getTable('Location')->findLocationByItem($item, true);
-
-			// If it has a location, we'll build the itemMetadata array and push it to items
-			if($location){
-				$item_metadata = array(
-					'id'          => $item->id,
-					'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) ),
-					'latitude'  => $location['latitude'],
-					'longitude'  => $location['longitude']
-				);
-
-				if( element_exists('Item Type Metadata','Street Address') )
-				{
-					$address=metadata( 'item', array( 'Item Type Metadata', 'Street Address' ) );
-					if($address){
-						$item_metadata['address']=$address;
+			if($item->public){
+				set_current_record( 'item', $item );
+				$location = get_db()->getTable('Location')->findLocationByItem($item, true);
+	
+				// If it has a location, we'll build the itemMetadata array and push it to items
+				if($location){
+					$item_metadata = array(
+						'id'          => $item->id,
+						'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) ),
+						'latitude'  => $location['latitude'],
+						'longitude'  => $location['longitude']
+					);
+	
+					if( element_exists('Item Type Metadata','Street Address') )
+					{
+						$address=metadata( 'item', array( 'Item Type Metadata', 'Street Address' ) );
+						if($address){
+							$item_metadata['address']=$address;
+						}
 					}
+	
+					array_push( $items, $item_metadata );
 				}
-
-				array_push( $items, $item_metadata );
 			}
 
 		}
