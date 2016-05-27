@@ -141,10 +141,8 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 					'modified'  => $file->modified );
 
 				$title = metadata( $file, array( 'Dublin Core', 'Title' ) );
-				if( $title )
-				{
-					$filedata[ 'title' ] = strip_formatting( $title );
-				}
+				$filedata[ 'title' ] = $title ? strip_formatting( $title ) : 'Untitled';
+
 
 				if( $file->hasThumbnail() )
 				{
