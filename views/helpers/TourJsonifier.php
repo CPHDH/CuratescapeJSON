@@ -44,8 +44,8 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 		$tour_metadata = array(
 			'id'           => $tour->id,
 			'title'        => $tour->title,
-			'description'  => $tour->description,
 			'creator'        => $tour->credits,
+			'description'  => nl2p($tour->description),
 			'tour_image'   => $tour->tour_image,
 			'postscript_text' => $tour->postscript_text,
 			'items'        => $items );
@@ -53,4 +53,17 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 
 		return $tour_metadata;
 	}
+}
+
+function nl2p($string)
+{
+    $paragraphs = '';
+
+    foreach (explode("\n", $string) as $line) {
+        if (trim($line)) {
+            $paragraphs .= '<p>' . $line . '</p><br>';
+        }
+    }
+
+    return $paragraphs;
 }
