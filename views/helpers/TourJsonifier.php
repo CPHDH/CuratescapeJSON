@@ -61,7 +61,7 @@ function nl2p($string)
 
     foreach (explode("\n", $string) as $line) {
         if (trim($line)) {
-            $paragraphs .= '<p>' . $line . '</p><br>';
+            $paragraphs .= $line . '<br><br>';
         }
     }
 
