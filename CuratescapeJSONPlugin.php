@@ -2,18 +2,10 @@
 
 class CuratescapeJSONPlugin extends Omeka_Plugin_AbstractPlugin
 {
-	protected $_hooks = array(
-		'initialize' );
-
 	protected $_filters = array(
 		'response_contexts',
 		'action_contexts',
 		'items_browse_per_page' );
-
-	public function hookInitialize()
-	{
-		get_view()->addHelperPath( dirname( __FILE__ ) . '/views/helpers', 'CuratescapeJSON_View_Helper_' );
-	}
 	
 	public function filterItemsBrowsePerPage( $perPage ){
 				
