@@ -106,24 +106,10 @@ if ($result_array) {
 		array_push($multipleItemMetadata, $record);
    }
 }
+  
+	$multipleItemMetadata = $this->removeDuplicateTitles($multipleItemMetadata);
 
-// Title duplicate fix... a terrible hack :(	
-// Sort items by title index (id), reset array index by id title using first title (lowest id), then resort items by item id
-// A better fix would be to get the desired title in the initial db query
-$postProcessed = [];
-function sortByTitleIndex($a, $b) {
-    return $a['title_index'] < $b['title_index'];
 }
-function sortById($a, $b) {
-    return $a['id'] < $b['id'];
-}
-usort($multipleItemMetadata, 'sortByTitleIndex');
-foreach($multipleItemMetadata as $a){ 
-	unset($a['title_index']);
-	$postProcessed[$a['id']] = $a;
-}
-usort($postProcessed, 'sortById');
-$multipleItemMetadata = $postProcessed;
 
 $metadata = array(
 	'items'        => $multipleItemMetadata,
