@@ -96,6 +96,8 @@ if ($result_array) {
 						break 1;
 					}
 				}
+			}else{
+				$record['thumbnail']='';
 			}
 		}
 		// Remove unprocessed filename from JSON output
