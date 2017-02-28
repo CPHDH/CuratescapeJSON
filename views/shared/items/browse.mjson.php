@@ -64,9 +64,10 @@ ORDER BY i.id DESC;
 // @TODO: accurately and consistently get the FIRST file w/ derivative image (first by by assigned order then by lowest id)
 // @TODO: make sure to only get the FIRST title (by lowest id)
 
-$result_array = $db->fetchAll($sql);
 
-if ($result_array) {
+try {
+	
+    $result_array = $db->fetchAll($sql);
 
 	foreach( $result_array as $record ){
 		
@@ -78,7 +79,7 @@ if ($result_array) {
 		// Normalize title
 		$record['title'] = trim(html_entity_decode(strip_formatting($record['title'])));
 		
-		// Normalize address - changed to empty string if null
+		// Normalize address
 		$record['address'] = isset($record['address']) ? $record['address'] : '';
 		
 		// Process thumbnail URLs
@@ -105,10 +106,11 @@ if ($result_array) {
 		
 		array_push($multipleItemMetadata, $record);
    }
-}
   
 	$multipleItemMetadata = $this->removeDuplicateTitles($multipleItemMetadata);
 
+} catch (Exception $e) {
+    // client will handle empty results... 
 }
 
 $metadata = array(
