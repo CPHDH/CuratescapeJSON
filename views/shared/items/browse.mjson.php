@@ -76,7 +76,7 @@ if ($result_array) {
 		}
 		
 		// Normalize title
-		$record['title'] = html_entity_decode(strip_formatting($record['title']));
+		$record['title'] = trim(html_entity_decode(strip_formatting($record['title'])));
 		
 		// Normalize address - changed to empty string if null
 		$record['address'] = isset($record['address']) ? $record['address'] : '';
