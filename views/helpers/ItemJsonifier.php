@@ -10,6 +10,7 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		$this->hasSponsor = element_exists('Item Type Metadata','Sponsor');
 		$this->hasAccessInfo = element_exists('Item Type Metadata','Access Information');
 		$this->hasStreetAddress = element_exists('Item Type Metadata','Street Address');
+		$this->hasVisibility = element_exists('Item Type Metadata','Access status');
 		// $this->hasLede = element_exists('Item Type Metadata','Lede');
 		// $this->hasWebsite = element_exists('Item Type Metadata','Official Website');
 		// $this->hasFactoid = element_exists('Item Type Metadata','Factoid');
@@ -42,6 +43,7 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 	}
 	
 	private static function sortById($a, $b)
+	private static function getContributor($item)
 	{
 	    return $a['id'] < $b['id'];
 	}
@@ -62,6 +64,15 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		}
 		usort($postProcessed, 'sortById');
 		return $postProcessed; 		
+        $contribItem = get_db()->getTable('ContributionContributedItem')->findByItem($item);
+        if($contribItem->anonymous) {
+            $name = "Anonymous";
+        } else {
+            $name = $contribItem->Contributor->name;
+        }
+        
+        return $name;
+		
 	}
 	
 	public function itemJsonifier( $item, $isExtended = false )
@@ -85,6 +96,10 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 			if( $this->hasStreetAddress){
 				$itemMetadata['address']=self::getItemTypeText('Street Address',true);
 			}
+
+			if( $this->hasVisibility){
+				$itemMetadata['visibility']=self::getItemTypeText('Access status');
+			}			
 	
 			if(metadata($item, 'has thumbnail')){
 				$itemMetadata[ 'thumbnail' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('square_thumbnail'), $result)) ? array_pop($result) : null;
@@ -102,7 +117,11 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				}
 				
 				$itemMetadata['creator']=$authorsStripped;
-	
+
+				if(!$itemMetadata['creator'] && plugin_is_active('Contribution') && plugin_is_active('GuestUser'))
+				{
+					$itemMetadata['creator']=self::getContributor($item);
+				}	
 	
 				if( $this->hasStory)
 				{
