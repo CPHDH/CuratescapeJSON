@@ -15,9 +15,8 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		// $this->hasWebsite = element_exists('Item Type Metadata','Official Website');
 		// $this->hasFactoid = element_exists('Item Type Metadata','Factoid');
 		// $this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');		
-
-		$this->storage = Zend_Registry::get('storage');
-	}
+		// $this->storage = Zend_Registry::get('storage');
+		}
 
 	private static function getDublinText( $element, $formatted = false )
 	{
@@ -36,34 +35,9 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 
 		return html_entity_decode( $raw );
 	}
-
-	private static function sortByTitleIndex($a, $b)
-	{
-	    return $a['title_index'] < $b['title_index'];
-	}
 	
-	private static function sortById($a, $b)
 	private static function getContributor($item)
 	{
-	    return $a['id'] < $b['id'];
-	}
-	
-	private static function removeDuplicateTitles($multipleItemMetadata){
-		/*
-		Title duplicate fix... a terrible hack :(	
-		Sort items by title index (id), 
-			...then reset array index by id title using first title (lowest id),
-			...then resort items by item id
-		A better fix would be to get the desired title in the initial db query	
-		*/	
-		$postProcessed = [];
-		usort($multipleItemMetadata, 'sortByTitleIndex');
-		foreach($multipleItemMetadata as $a){ 
-			unset($a['title_index']);
-			$postProcessed[$a['id']] = $a;
-		}
-		usort($postProcessed, 'sortById');
-		return $postProcessed; 		
         $contribItem = get_db()->getTable('ContributionContributedItem')->findByItem($item);
         if($contribItem->anonymous) {
             $name = "Anonymous";
@@ -89,10 +63,9 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				'featured'    => $item->featured,
 				'latitude'    => $location[ 'latitude' ],
 				'longitude'   => $location[ 'longitude' ],
-				'title'       => html_entity_decode( strip_formatting( $titles[0] ) ),
+				'title'       => $titles[0] ? trim(html_entity_decode( strip_formatting( $titles[0] ) )) : 'Untitled',
 			);
-	
-	
+				
 			if( $this->hasStreetAddress){
 				$itemMetadata['address']=self::getItemTypeText('Street Address',true);
 			}
