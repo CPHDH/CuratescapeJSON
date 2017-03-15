@@ -39,10 +39,11 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 	private static function getContributor($item)
 	{
         $contribItem = get_db()->getTable('ContributionContributedItem')->findByItem($item);
+        $name=array();
         if($contribItem->anonymous) {
-            $name = "Anonymous";
-        } else {
-            $name = $contribItem->Contributor->name;
+            $name[] = "Anonymous";
+        } else if($contribItem->Contributor->name){
+            $name[] = $contribItem->Contributor->name;
         }
         
         return $name;
