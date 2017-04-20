@@ -21,7 +21,7 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 				if($location){
 					$item_metadata = array(
 						'id'          => $item->id,
-						'title'       => metadata( 'item', array( 'Dublin Core', 'Title' ) ),
+						'title'       => trim( html_entity_decode( strip_formatting( metadata( 'item', array( 'Dublin Core', 'Title' ) ) ) ) ),
 						'latitude'  => $location['latitude'],
 						'longitude'  => $location['longitude']
 					);
@@ -30,7 +30,7 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 					{
 						$address=metadata( 'item', array( 'Item Type Metadata', 'Street Address' ) );
 						if($address){
-							$item_metadata['address']=$address;
+							$item_metadata['address']=trim( html_entity_decode( strip_formatting( $address ) ) );
 						}
 					}
 	
