@@ -10,7 +10,7 @@ class CuratescapeJSONPlugin extends Omeka_Plugin_AbstractPlugin
 	
 	public function filterItemsBrowsePerPage( $perPage ){
 				
-		if( $_GET["output"] == 'mobile-json'){
+		if( isset($_GET["output"]) && $_GET["output"] == 'mobile-json'){
 			$perPage=null; // no pagination
 		}
 		
