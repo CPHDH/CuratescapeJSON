@@ -115,7 +115,7 @@ if($itemJsonifier){
 		{
 		    return $a['id'] < $b['id'];
 		}
-		$postProcessed = [];
+		$postProcessed = array();
 		usort($multipleItemMetadata, 'sortByTitleIndex');
 		foreach($multipleItemMetadata as $a){ 
 			unset($a['title_index']);
