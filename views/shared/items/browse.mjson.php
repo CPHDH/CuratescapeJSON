@@ -86,6 +86,7 @@ if($itemJsonifier){
 				// Replace any other extension with .jpg
 				$filename = preg_replace('/\\.[A-Za-z]{3,4}/', '', $record['filename']) . ".jpg";
 				$record['thumbnail'] = WEB_ROOT . "/files/square_thumbnails/$filename";	
+				$record['fullsize'] = WEB_ROOT . "/files/fullsize/$filename";	
 			}else{
 				// If db query didn't find a "first file" use this slower method
 				$r=get_record_by_id('item',$record['id']);
@@ -93,11 +94,13 @@ if($itemJsonifier){
 					foreach($r->getFiles() as $f){
 						if( $f['has_derivative_image']==1 ){
 							$record['thumbnail'] = WEB_ROOT . "/files/square_thumbnails/" . preg_replace('/\\.[A-Za-z]{3,4}/', '', $f['filename']) . ".jpg" ;
+							$record['fullsize'] = WEB_ROOT . "/files/fullsize/" . preg_replace('/\\.[A-Za-z]{3,4}/', '', $f['filename']) . ".jpg" ;
 							break 1;
 						}
 					}
 				}else{
 					$record['thumbnail']='';
+					$record['fullsize']='';
 				}
 			}
 			// Remove unprocessed filename from JSON output
