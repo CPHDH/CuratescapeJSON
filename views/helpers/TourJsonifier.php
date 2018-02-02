@@ -25,6 +25,11 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 						'latitude'  => $location['latitude'],
 						'longitude'  => $location['longitude']
 					);
+					
+					if(metadata($item, 'has thumbnail')){
+						$item_metadata[ 'thumbnail' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('square_thumbnail'), $result)) ? array_pop($result) : '';
+						$item_metadata[ 'fullsize' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('fullsize'), $result)) ? array_pop($result) : '';
+					}
 	
 					if( element_exists('Item Type Metadata','Street Address') )
 					{
@@ -47,6 +52,7 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 			'creator'      => $tour->credits,
 			'description'  => nl2p($tour->description),
 			'postscript_text' => $tour->postscript_text,
+			'tour_img'	   => isset($items[0]['fullsize']) ? $items[0]['fullsize'] : '',
 			'items'        => $items );
 
 
