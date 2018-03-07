@@ -24,17 +24,20 @@ class CuratescapeJSON_View_Helper_SearchJsonifier extends Zend_View_Helper_Abstr
 				'result_id'=>$id,
 				'result_type'=>$type,
 				'result_title'=>$searchText->title,
-				'result_thumbnail'=>$thumbSrc ? $thumbSrc : null,
+				'result_thumbnail'=>$thumbSrc ? $thumbSrc : '',
 			);
 			
 			return $itemMetadata;
 			
 		}elseif($type=='Tour'){
+			
+			$tour_items=$result->getItems();
 
 			$itemMetadata=array(
 				'result_id'=>$id,
 				'result_type'=>$type,
-				'result_title'=>$searchText->title
+				'result_title'=>$searchText->title,
+				'result_tour_items'=>count($tour_items),
 			);
 			
 			return $itemMetadata;			
@@ -44,13 +47,17 @@ class CuratescapeJSON_View_Helper_SearchJsonifier extends Zend_View_Helper_Abstr
 			$thumbSrc=metadata($result,'has_derivative_image') ? file_display_url($result,'square_thumbnail') : null;
 			$subtype=metadata($result,'mime_type');
 			$subtype=explode('/',$subtype);
-
+			$parent_id=$result->item_id;
+			$parent=get_record_by_id('Item', $parent_id );
+			
 			$itemMetadata=array(
 				'result_id'=>$id,
 				'result_type'=>$type,
 				'result_title'=>$searchText->title,
-				'result_thumbnail'=>$thumbSrc ? $thumbSrc : null,
-				'result_subtype'=>isset($subtype[0]) ? $subtype[0] : null,
+				'result_thumbnail'=>$thumbSrc ? $thumbSrc : '',
+				'result_subtype'=>isset($subtype[0]) ? $subtype[0] : 'Unknown',
+				'result_parent_id'=>$parent_id,
+				'result_parent_title'=>metadata($parent, array('Dublin Core', 'Title')),
 			);
 			
 			return $itemMetadata;			
