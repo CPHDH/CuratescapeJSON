@@ -44,11 +44,11 @@ class CuratescapeJSON_View_Helper_SearchJsonifier extends Zend_View_Helper_Abstr
 			
 		}elseif($type=='File'){
 			
-			$thumbSrc=metadata($result,'has_derivative_image') ? file_display_url($result,'square_thumbnail') : null;
 			$subtype=metadata($result,'mime_type');
 			$subtype=explode('/',$subtype);
 			$parent_id=$result->item_id;
 			$parent=get_record_by_id('Item', $parent_id );
+			$thumbSrc=( metadata($result,'has_derivative_image') && $subtype[0] !=='video' ) ? file_display_url($result,'square_thumbnail') : null;
 			
 			$itemMetadata=array(
 				'result_id'=>$id,
