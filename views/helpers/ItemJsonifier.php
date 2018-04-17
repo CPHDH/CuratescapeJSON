@@ -11,10 +11,10 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		$this->hasAccessInfo = element_exists('Item Type Metadata','Access Information');
 		$this->hasStreetAddress = element_exists('Item Type Metadata','Street Address');
 		$this->hasVisibility = element_exists('Item Type Metadata','Access status');
-		// $this->hasLede = element_exists('Item Type Metadata','Lede');
-		// $this->hasWebsite = element_exists('Item Type Metadata','Official Website');
+		$this->hasLede = element_exists('Item Type Metadata','Lede');
+		$this->hasWebsite = element_exists('Item Type Metadata','Official Website');
 		// $this->hasFactoid = element_exists('Item Type Metadata','Factoid');
-		// $this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');		
+		$this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');		
 		// $this->storage = Zend_Registry::get('storage');
 		}
 
@@ -126,9 +126,6 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				{
 					$itemMetadata[ 'accessinfo' ] = self::getItemTypeText('Access Information');
 				}
-	
-				/*
-				** Disabled: not currently used
 				
 				if( $this->hasLede )
 				{
@@ -142,16 +139,15 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 
 				if( $this->hasRelatedResources )
 				{
-					$itemMetadata[ 'related-resources' ] = self::getItemTypeText('Related Resources',true);
-				}
-
-				if( $this->hasFactoid )
-				{
-					$itemMetadata[ 'factoid' ] = self::getItemTypeText('Factoid',true);
+					$resources = array();
+					$arr = metadata( 'item', array( 'Item Type Metadata', 'Related Resources' ), array( 'all' => true ) );
+					foreach($arr as $resource){
+						$resources[]= trim(html_entity_decode($resource));
+					}
+					
+					$itemMetadata[ 'related_resources' ]=$resources;
 				}
 				
-				** End disabled
-				*/
 	
 				// Add files
 				$files = array();
