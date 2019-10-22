@@ -32,6 +32,7 @@ if($itemJsonifier){
 	SELECT i.id, 
 	       i.featured, 
 	       l.latitude, 
+	       i.modified,
 	       l.longitude,
 	       et1.id 'title_index',
 	       et1.text 'title',
