@@ -13,8 +13,8 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		$this->hasVisibility = element_exists('Item Type Metadata','Access status');
 		$this->hasLede = element_exists('Item Type Metadata','Lede');
 		$this->hasWebsite = element_exists('Item Type Metadata','Official Website');
-		// $this->hasFactoid = element_exists('Item Type Metadata','Factoid');
 		$this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');		
+		$this->hasFactoid = element_exists('Item Type Metadata','Factoid');
 		// $this->storage = Zend_Registry::get('storage');
 		}
 
@@ -150,6 +150,17 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				}
 				
 	
+
+				if( $this->hasFactoid )
+				{
+					$factoids = array();
+					$arr = metadata( 'item', array( 'Item Type Metadata', 'Factoid' ), array( 'all' => true ) );
+					foreach($arr as $factoid){
+						$factoids[]= trim(html_entity_decode($factoid));
+					}
+					$itemMetadata[ 'factoids' ]=$factoids;
+				}
+
 				// Add files
 				$files = array();
 				foreach( $item->Files as $file )
