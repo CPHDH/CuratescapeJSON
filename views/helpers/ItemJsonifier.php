@@ -10,7 +10,6 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 		$this->hasSponsor = element_exists('Item Type Metadata','Sponsor');
 		$this->hasAccessInfo = element_exists('Item Type Metadata','Access Information');
 		$this->hasStreetAddress = element_exists('Item Type Metadata','Street Address');
-		$this->hasVisibility = element_exists('Item Type Metadata','Access status');
 		$this->hasLede = element_exists('Item Type Metadata','Lede');
 		$this->hasWebsite = element_exists('Item Type Metadata','Official Website');
 		$this->hasRelatedResources = element_exists('Item Type Metadata','Related Resources');		
@@ -72,10 +71,6 @@ class CuratescapeJSON_View_Helper_ItemJsonifier extends Zend_View_Helper_Abstrac
 				$itemMetadata['address']=self::getItemTypeText('Street Address',true);
 			}
 
-			if( $this->hasVisibility){
-				$itemMetadata['visibility']=self::getItemTypeText('Access status');
-			}			
-	
 			if(metadata($item, 'has thumbnail')){
 				$itemMetadata[ 'thumbnail' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('square_thumbnail'), $result)) ? array_pop($result) : null;
 			}
