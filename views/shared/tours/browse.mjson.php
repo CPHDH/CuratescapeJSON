@@ -3,6 +3,10 @@
 echo '{"tours":[';
 
 $tourCount = 0;
+if(count($tours) && function_exists('tb_sortByOrdinal')){
+	// via TourBuilder plugin
+	usort($tours, 'tb_sortByOrdinal');
+}
 
 // Loop through all the tours
 foreach( $tours as $tour )

@@ -57,6 +57,7 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 			'title'        => $tour->title,
 			'creator'      => $tour->credits,
 			'description'  => nl2p($tour->description),
+			'ordinal' => isset($tour->ordinal) ? $tour->ordinal : 0,
 			'postscript_text' => $tour->postscript_text,
 			'tour_img'	   => isset($items[0]['fullsize']) ? $items[0]['fullsize'] : '',
 			'items'        => $items );
