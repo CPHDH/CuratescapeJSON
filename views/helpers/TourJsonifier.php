@@ -50,6 +50,7 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 		$tour_metadata = array(
 			'id' => $tour->id,
 			'ordinal' => isset($tour->ordinal) ? $tour->ordinal : 0,
+			'featured' => isset($tour->featured) ? $tour->featured : 0,
 			'title' => $tour->title,
 			'creator' => $tour->credits,
 			'description' => nl2p($tour->description),
