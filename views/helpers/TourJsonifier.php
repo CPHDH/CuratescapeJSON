@@ -26,6 +26,13 @@ class CuratescapeJSON_View_Helper_TourJsonifier extends Zend_View_Helper_Abstrac
 						$item_metadata[ 'thumbnail' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('square_thumbnail'), $result)) ? array_pop($result) : '';
 						$item_metadata[ 'fullsize' ] = (preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', item_image('fullsize'), $result)) ? array_pop($result) : '';
 					}
+					
+					if( element_exists('Item Type Metadata','Subtitle') ){
+						$subtitle=metadata( 'item', array( 'Item Type Metadata', 'Subtitle' ) );
+						if($subtitle){
+							$item_metadata['subtitle']=trim( html_entity_decode( strip_formatting( $subtitle ) ) );
+						}
+					}
 
 					if( element_exists('Item Type Metadata','Street Address') ){
 						$address=metadata( 'item', array( 'Item Type Metadata', 'Street Address' ) );
