@@ -21,11 +21,19 @@ function finalpassJSON($processing, $postProcessed = array()){
 		$postProcessed[$a['id']] = $a; // (overwrites dupes based on sort)
 	}
 	usort($postProcessed, 'sortById'); // re-sort new to old
+
+	echo cache_config();
 	echo json_encode(array(
 		'items'=> $postProcessed,
 		'total_items'=> count( $postProcessed ))
 	);
 }
+
+function cache_config($seconds=180){
+	header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + $seconds));
+	header('Cache-Control: public, max-age='.$seconds);
+}
+
 function getLoopItemIds(){
 	$itemIdArray = array();
 	foreach( loop('items') as $item ){
